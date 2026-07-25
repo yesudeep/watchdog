@@ -1,0 +1,38 @@
+# Configuration for Gemini Code Assist for GitHub.
+# Schema: https://docs.cloud.google.com/gemini/docs/code-review/customize-repo-review
+#
+# Review guidance lives in .gemini/styleguide.md next to this file.
+
+# Keep pull request summaries factual; no poems.
+have_fun: false
+
+# Paths where automated review adds noise rather than signal.
+ignore_patterns:
+  # Vendored verbatim from python/pythoncapi-compat; we do not modify it, so
+  # review comments here are never actionable.
+  - "src/pythoncapi_compat.h"
+  # Append-only records. Reviewing prose churn wastes comment budget.
+  - "changelog.rst"
+  - "AUTHORS"
+  - "THIRD_PARTY_LICENSES.md"
+  # Build output, should never be committed but is cheap to exclude.
+  - "docs/build/**"
+
+code_review:
+  disable: false
+
+  # LOW surfaces a lot of style nits that `ruff format` and `ruff check`
+  # already enforce in CI. MEDIUM keeps reviews focused on correctness.
+  comment_severity_threshold: MEDIUM
+
+  # Unlimited. Raise a cap here if reviews start overwhelming pull requests.
+  max_review_comments: -1
+
+  pull_request_opened:
+    # The bot's own help text on every pull request is noise for contributors.
+    help: false
+    summary: true
+    code_review: true
+    # Drafts are work in progress; review them on demand with `/gemini review`
+    # rather than automatically.
+    include_drafts: false
